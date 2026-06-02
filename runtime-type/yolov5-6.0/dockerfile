@@ -1,0 +1,44 @@
+#--------------------------------------
+# FROM  vineandsnail/pytorch_opencv_base:v1
+# WORKDIR /workspace
+
+# # RUN apt-get update && apt-get install -y python3-opencv
+
+# COPY requirements.txt ./
+# RUN pip install -r requirements.txt
+
+# COPY . .
+
+# CMD ["gunicorn", "app:app", "-c", "./gunicorn.conf.py"]
+
+# FROM yolov5_test:v2
+
+# WORKDIR /workspace/jy_spfx_ALGO
+
+# #RUN pip install numpy==1.20.0rc2
+
+# CMD ["gunicorn", "server:app", "-c", "./gunicorn.conf.py"]
+
+FROM nvcr.io/nvidia/pytorch:22.03-py3
+
+RUN apt update && apt install -y zip htop screen libgl1-mesa-glx
+
+RUN python -m pip install --upgrade pip
+
+RUN pip uninstall -y nvidia-tensorboard nvidia-tensorboard-plugin-dlprof
+
+# RUN pip install numpy==1.20.0rc2
+
+# RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+COPY requirements.txt .
+
+RUN pip install --no-cache -r requirements.txt
+
+RUN mkdir -p /workspace/jy_spfx_ALGO
+WORKDIR /workspace/jy_spfx_ALGO
+
+COPY . /workspace/jy_spfx_ALGO
+
+CMD ["gunicorn", "server:app", "-c", "./gunicorn.conf.py"]

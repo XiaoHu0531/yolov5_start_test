@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>模型启动与测试工作台</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>模型启动与测试工作台</h1>
+        <p id="runtimeStatus">正在读取资源状态...</p>
+      </div>
+      <button id="refreshBtn" class="icon-button" title="刷新">刷新</button>
+    </header>
+
+    <section class="metrics" aria-label="资源看板">
+      <div class="metric"><span>CPU</span><strong id="cpuMetric">--</strong></div>
+      <div class="metric"><span>内存</span><strong id="memoryMetric">--</strong></div>
+      <div class="metric"><span>GPU 显存</span><strong id="gpuMetric">--</strong></div>
+      <div class="metric"><span>运行实例</span><strong id="runningMetric">0</strong></div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <div class="panel-title">
+          <h2>模型导入</h2>
+        </div>
+        <form id="modelForm" class="import-form">
+          <label>模型名称<input id="modelName" name="name" required placeholder="如 yolov5s"></label>
+          <label>版本号<input id="modelVersion" name="version" required placeholder="v1.0.0"></label>
+          <label>算法类型
+            <select id="algorithm" name="algorithm" required>
+              <option value="object_detection">目标检测</option>
+              <option value="classification">图像分类</option>
+              <option value="vlm">视觉语言模型-VLM</option>
+            </select>
+          </label>
+          <label>推理后端
+            <select id="runtimeType" name="runtime_type" required>
+              <option value="yolov5_v5">YOLOv5-5.0</option>
+              <option value="yolov5_v6">YOLOv5-6.0</option>
+              <option value="yolov8_obb">YOLOv8-OBB</option>
+            </select>
+          </label>
+          <label class="dropzone compact">
+            <input id="modelFile" name="file" type="file" accept=".onnx,.pth,.pb,.pt,.zip">
+            <strong>选择模型文件</strong>
+            <span>.onnx / .pth / .pb / .pt / .zip</span>
+          </label>
+          <label class="dropzone compact">
+            <input id="modelFolder" type="file" accept=".onnx,.pth,.pb,.pt,.zip" multiple webkitdirectory directory>
+            <strong>选择模型文件夹</strong>
+            <span>自动识别文件夹内支持的模型文件</span>
+          </label>
+          <div id="selectedModelFiles" class="selected-files">尚未选择模型文件</div>
+          <button class="primary-button" type="submit">导入模型</button>
+        </form>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>部署管理</h2>
+          <span id="modelCount" class="count">0</span>
+        </div>
+        <div id="modelList" class="model-list"></div>
+      </section>
+    </section>
+
+    <section class="sandbox">
+      <div class="panel">
+        <div class="panel-title">
+          <h2>图片测试沙箱</h2>
+          <div class="panel-actions">
+            <button id="clearImagesBtn" class="secondary-button" type="button">清空图片</button>
+            <button id="inferBtn" class="primary-button" type="button">开始推理</button>
+          </div>
+        </div>
+        <div class="test-grid">
+          <label>运行中模型
+            <select id="runningModels"></select>
+          </label>
+          <label class="dropzone">
+            <input id="imageFile" type="file" accept="image/*" multiple>
+            <strong>上传图片</strong>
+            <span>支持 jpg、png、bmp、webp</span>
+          </label>
+          <label class="dropzone">
+            <input id="imageFolder" type="file" accept="image/*" multiple webkitdirectory directory>
+            <strong>上传图片文件夹</strong>
+            <span>按文件夹内图片顺序批量推理</span>
+          </label>
+        </div>
+        <div id="selectedImages" class="selected-files">尚未选择图片</div>
+        <div id="previewWrap" class="preview-grid empty-preview">暂无图片</div>
+      </div>
+
+      <div class="panel result-panel">
+        <div class="panel-title">
+          <h2>推理结果</h2>
+          <div class="panel-actions">
+            <button id="downloadAllBtn" class="secondary-button hidden" type="button">下载全部</button>
+            <span id="latencyBadge" class="badge hidden">--</span>
+          </div>
+        </div>
+        <div id="resultList" class="result-list empty-block">暂无推理结果</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="imageViewer" class="image-viewer hidden" aria-hidden="true">
+    <button id="viewerClose" class="viewer-close" title="关闭">关闭</button>
+    <img id="viewerImage" alt="">
+    <div id="viewerCaption" class="viewer-caption"></div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

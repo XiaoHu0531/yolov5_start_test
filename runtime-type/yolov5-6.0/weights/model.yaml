@@ -1,0 +1,6 @@
+
+# weights: "/media/ps/Linux_Gutail2/hx/Code/yolov5-6.0/runs/train/ywhy20251205/weights/best.pt"
+weights: "/media/ps/Linux_Gutail2/hx/model/model_infer/ywhy_cv/weights/ywhy-2025-06-13.pt"
+#weights: "./weights/best.pt"
+#检测模型命名规则：ryxw-2024-06-17.pt
+device: '1'
